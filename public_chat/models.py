@@ -45,7 +45,7 @@ class PublicChatRoom(models.Model):
 		# Returns the Channels Group name that sockets should subscribe to to get sent
 		# messages as they are generated.
 
-		return f"PublicChatRoom-%{self.id}"
+		return f"PublicChatRoom-{self.id}"
 
 class PublicRoomChatMessageManager(models.Manager):
     def by_room(self, room):
