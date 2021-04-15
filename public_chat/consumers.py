@@ -6,7 +6,7 @@ from django.core.signals import request_finished
 from django.utils import timezone
 from datetime import datetime
 
-from public_chat.models import PublicChatRoom
+from public_chat.models import PublicChatRoom, PublicRoomChatMessage
 
 MSG_TYPE_MESSAGE = 0 # For standard messages
 
@@ -70,6 +70,8 @@ class PublicChatConsumer(AsyncJsonWebsocketConsumer):
 			raise ClientError("ROOM_ACCESS_DENIED", "Room access denied.")
 
 		room = await get_room_or_error(room_id)
+
+		await create_public_room_chat_message(room, self.scope['user'], message)
 
 		await self.channel_layer.group_send(
 			room.group_name,
@@ -173,6 +175,10 @@ def is_authenticated(user):
 		return True
 	
 	return False
+
+@database_sync_to_async
+def create_public_room_chat_message(room, user, message):
+	return PublicRoomChatMessage.objects.create(user=user, room=room, content=message)
 
 @database_sync_to_async
 def connect_user(room, user):
