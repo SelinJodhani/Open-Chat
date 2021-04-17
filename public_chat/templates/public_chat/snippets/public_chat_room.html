@@ -116,6 +116,8 @@ PUBLIC CHAT
 	public_chat_socket.onmessage = function(message) {
 		console.log("Got chat websocket message " + message.data);
 		var data = JSON.parse(message.data);
+		
+		displayChatroomLoadingSpinner(data.display_progress_bar)	
 
 		// Handle errors (ClientError)
 		if (data.error) {
@@ -324,6 +326,16 @@ PUBLIC CHAT
 	function showClientErrorModal(message){
 		document.getElementById("id_client_error_modal_body").innerHTML = message
 		document.getElementById("id_trigger_client_error_modal").click()
+	}
+
+	function displayChatroomLoadingSpinner(isDisplayed){
+		var spinner = document.getElementById("id_chatroom_loading_spinner")
+		if(isDisplayed){
+			spinner.style.display = "block"
+		}
+		else{
+			spinner.style.display = "none"
+		}
 	}
 </script>
 
