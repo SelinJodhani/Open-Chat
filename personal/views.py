@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.conf import settings
 
-DEBUG = False
+DEBUG = True
 
 def home_screen_view(request):
 	context = {}
