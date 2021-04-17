@@ -14,10 +14,7 @@ from django.utils import timezone
 from datetime import datetime
 
 from public_chat.models import PublicChatRoom, PublicRoomChatMessage
-
-MSG_TYPE_MESSAGE = 0 # For standard messages
-
-DEFAULT_ROOM_CHAT_MESSAGE_PAGE_SIZE = 10
+from public_chat.constants import *
 
 class PublicChatConsumer(AsyncJsonWebsocketConsumer):
 	async def connect(self):
@@ -153,6 +150,15 @@ class PublicChatConsumer(AsyncJsonWebsocketConsumer):
 			"username": self.scope['user'].username
 		})
 
+		num_connected_users = get_num_connected_users(room)
+		await self.channel_layer.group_send(
+			room.group_name,
+			{
+				"type": "connected.user.count", # connected_user_count()
+				"connected_user_count": num_connected_users
+			}
+		)
+
 	async def send_messages_payload(self, messages, new_page_number):
 		# Sends a payload of messages  to the ui
 
@@ -187,6 +193,15 @@ class PublicChatConsumer(AsyncJsonWebsocketConsumer):
 			self.channel_name
 		)
 
+		num_connected_users = get_num_connected_users(room)
+		await self.channel_layer.group_send(
+			room.group_name,
+			{
+				"type": "connected.user.count", # connected_user_count()
+				"connected_user_count": num_connected_users
+			}
+		)
+
 	async def handle_client_error(self, e):
 		# Called when a ClientError is raised.
 		# Sends error data to UI.
@@ -207,6 +222,21 @@ class PublicChatConsumer(AsyncJsonWebsocketConsumer):
 		await self.send_json({
 			"display_progress_bar": is_displayed
 		})
+
+	async def connected_user_count(self, event):
+		print("PublicChatConsumer: connected_user_count: count: " + str(event['connected_user_count']))
+
+		await self.send_json({
+			"msg_type": MSG_TYPE_CONNECTED_USER_COUNT,
+			"connected_user_count": event['connected_user_count']
+		})
+
+def get_num_connected_users(room):
+
+	if room.users:
+		return len(room.users.all())
+	
+	return 0
 
 def is_authenticated(user):
 
