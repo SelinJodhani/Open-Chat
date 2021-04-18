@@ -14,11 +14,14 @@
     <link rel="stylesheet" href="{% static 'cropperjs/dist/cropper.min.css' %}">
 
     <!-- Markdown-it -->
-    {% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/11.0.1/markdown-it.min.js" integrity="sha512-hW0KbtvDnXCHbh2UCNP/6R+oXxCKiOfm9ciuUekdGBCQF1+57bGqZAk3sAFir7PMQstyRW0UecsSc2HQotH2vg==" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/styles/default.min.css" integrity="sha512-kZqGbhf9JTB4bVJ0G8HCkqmaPcRgo88F0dneK30yku5Y/dep7CZfCnNml2Je/sY4lBoqoksXz4PtVXS4GHSUzQ==" crossorigin="anonymous" />
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/highlight.min.js" integrity="sha512-TDKKr+IvoqZnPzc3l35hdjpHD0m+b2EC2SrLEgKDRWpxf2rFCxemkgvJ5kfU48ip+Y+m2XVKyOCD85ybtlZDmw==" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/kotlin.min.js" integrity="sha512-8aYTnyDstX39PHxorDD+6ROknf98Vqr5KTOjwRCl/442uAVKOpCJ5wY9I3VQ6y46rdDJKYBIglIfE2+GQk8U5Q==" crossorigin="anonymous"></script>
-	<script>hljs.initHighlightingOnLoad();</script> {% endcomment %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/12.0.6/markdown-it.min.js" integrity="sha512-7U8vY7c6UQpBNQOnBg3xKX502NAckvk70H1nWvh6W7izA489jEz+RCN3ntT1VMdXewaSKkOrEBegp/h6SPXrjw==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/default.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/atom-one-dark.min.css" integrity="sha512-Fcqyubi5qOvl+yCwSJ+r7lli+CO1eHXMaugsZrnxuU4DVpLYWXTVoHy55+mCb4VZpMgy7PBhV7IiymC0yu9tkQ==" crossorigin="anonymous" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/languages/c.min.js" integrity="sha512-wHqmpr+4VxU/4t670EAcGTNeAcZ83HqqABH2hvF52BKpkUk6k2D5XCH/8fFaEGh9g8xC6vAqPz2ANDfebO328g==" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/languages/cpp.min.js" integrity="sha512-GoqJT1JeyH9hP67tABTbUkSiu+NyTkBWagS4Us6HdUIJwDS4fE4idtu1eLmOl0hawQlHO74Ug6j48JG1zreWWA==" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/languages/python.min.js" integrity="sha512-KwDXEFm7oWi8DYF/08uAQpRuffWqgJq7by0RCG7XMTlmcNfJ7OMYdBD3i7zPF7+60DvXosSZqwWMSoiaA+U90w==" crossorigin="anonymous"></script>
+	<script>hljs.initHighlightingOnLoad();</script>
 </head>
 
 <body>
@@ -62,6 +65,10 @@
 <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 <script type="module" src="{% static 'cropperjs/dist/cropper.min.js' %}"></script> {% endcomment %}
 
+<script src='https://cdn.jsdelivr.net/npm/darkreader@4.9.27/darkreader.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/darkreader@4.9.27/index.d.ts'></script>
+<script src='https://cdn.jsdelivr.net/npm/darkreader@4.9.27/package.json'></script>
+
 <script type="text/javascript">
 	function displayLoadingSpinner(isDisplayed){
 		var spinner = document.getElementById("id_loading_spinner")
@@ -72,6 +79,12 @@
 			spinner.style.display = "none"
 		}
 	}
+
+	DarkReader.enable({
+    brightness: 100,
+    contrast: 100,  
+    });
+	
 </script>
 
 </body>
