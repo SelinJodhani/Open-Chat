@@ -2,7 +2,7 @@
 Chat web app made in Django.
 
 ## Features
-1. User Management
+1. User Management<br>
     ᐅ Registration
     ᐅ Login
     ᐅ Logout
@@ -33,12 +33,12 @@ Chat web app made in Django.
 ## Getting Started
 This project is made on **Python 3.8.9** and **Django 2.2.19**.
 
-Install required depedencies:
+#### Install required depedencies:
 ```
 pip install requirements.txt
 ```
 
-Run following commands:
+#### Run following commands:
 ```
 python3 manage.py makemigrations
 python3 manage.py migrate
