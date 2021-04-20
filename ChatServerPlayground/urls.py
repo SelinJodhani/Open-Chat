@@ -21,7 +21,7 @@ urlpatterns = [
 	path('', home_screen_view, name='home'),
     path('account/', include('account.urls', namespace='account')),
 	path('admin/', admin.site.urls),
-    # path('chat/', include('chat.urls', namespace='chat')),
+    path('chat/', include('chat.urls', namespace='chat')),
     path('friend/', include('friend.urls', namespace='friend')),
     path('login/', LoginView, name="login"),
     path('logout/', LogoutView, name="logout"),
