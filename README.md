@@ -3,32 +3,32 @@ Chat web app made in Django.
 
 ## Features
 1. User Management<br>
-    &emspᐅ Registration<br>
-    &emspᐅ Login<br>
-    &emspᐅ Logout<br>
-    &emspᐅ Forgot Password<br>
-    &emspᐅ Change Password<br>
-    &emspᐅ View accounts<br>
-    &emspᐅ Update account properties<br>
-    &emspᐅ Search for other users<br>
+    ᐅ Registration<br>
+    ᐅ Login<br>
+    ᐅ Logout<br>
+    ᐅ Forgot Password<br>
+    ᐅ Change Password<br>
+    ᐅ View accounts<br>
+    ᐅ Update account properties<br>
+    ᐅ Search for other users<br>
 
 2. Friend System<br>
-    &emspᐅ Send friend requests<br>
-    &emspᐅ Accept friend requests<br>
-    &emspᐅ Decline friend requests<br>
-    &emspᐅ Cancel friend requests<br>
-    &emspᐅ Remove Friends<br>
+    ᐅ Send friend requests<br>
+    ᐅ Accept friend requests<br>
+    ᐅ Decline friend requests<br>
+    ᐅ Cancel friend requests<br>
+    ᐅ Remove Friends<br>
 
 3. Public Chatroom<br>
-    &emspᐅ Public chatroom where any authenticated user can chat. (Django Channels & WebSockets)<br>
+    ᐅ Public chatroom where any authenticated user can chat. (Django Channels & WebSockets)<br>
 
 4. Private Chatroom<br>
-    &emspᐅ Have 1-on-1 conversations with friends. (Django Channels and WebSockets)<br>
+    ᐅ Have 1-on-1 conversations with friends. (Django Channels and WebSockets)<br>
 
 5. Notifications<br>
-    &emspᐅ Real-time notifications for things like:<br>
-        &emsp1. Friend requests (Can accept / decline from the notification)<br>
-        &emsp2. Private chat messages<br>
+    ᐅ Real-time notifications for things like:<br>
+        1. Friend requests (Can accept / decline from the notification)<br>
+        2. Private chat messages<br>
 
 ## Getting Started
 This project is made on **Python 3.8.9** and **Django 2.2.19**.
