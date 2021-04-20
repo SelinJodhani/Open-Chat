@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db.models.fields import BooleanField
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from friend.models import FriendList
 
 # Create your models here.
 
@@ -28,7 +31,7 @@ def get_profile_image_fillepath(self, filename):
     return f'profile_images/{self.pk}/{"profile_image.png"}'
 
 def get_default_profile_image():
-    return 'images/default.png'
+    return 'images/dummy_image.png'
 
 class Account(AbstractBaseUser):
     email = models.EmailField(verbose_name='email', max_length=60, unique=True)
@@ -59,3 +62,6 @@ class Account(AbstractBaseUser):
     def has_module_perms(self, app_label):
         return True
     
+@receiver(post_save, sender=Account)
+def user_save(sender, instance, **kwargs):
+    FriendList.objects.get_or_create(user=instance)
