@@ -8,13 +8,13 @@ from django.core.serializers import serialize
 
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
-from django.contrib.humanize.templatetags.humanize import naturalday
 from django.core.signals import request_finished
 from django.utils import timezone
-from datetime import datetime
 
 from public_chat.models import PublicChatRoom, PublicRoomChatMessage
 from public_chat.constants import *
+from chat.exceptions import ClientError
+from chat.utils import calculate_timestamp
 
 class PublicChatConsumer(AsyncJsonWebsocketConsumer):
 	async def connect(self):
@@ -267,36 +267,6 @@ def get_room_or_error(room_id):
 		raise ClientError("ROOM_INVALID", "Invalid room")
 
 	return room
-
-class ClientError(Exception):
-
-	def __init__(self, code, message):
-		super().__init__(code)
-		self.code = code
-
-		if message:
-			self.message = message
-
-def calculate_timestamp(timestamp):
-	# 1. Today or yesterday:
-	#     - EX: 'today at 10:56 AM'
-	#     - EX: 'yesterday at 5:19 PM'
-	# 2. other:
-	#     - EX: 05/06/2020
-	#     - EX: 12/28/2020
-
-	# Today or yesterday
-	if(naturalday(timestamp) == "today" or naturalday(timestamp) == "yesterday"):
-		str_time = datetime.strftime(timestamp, "%I:%M %p")
-		str_time = str_time.strip("0")
-		ts = f"{naturalday(timestamp)} at {str_time}"
-
-	# Other day
-	else:
-		str_time = datetime.strftime(timestamp, "%m/%d/%Y")
-		ts = f"{str_time}"
-
-	return ts
 
 @database_sync_to_async
 def get_room_chat_messages(room, page_number):
