@@ -188,13 +188,6 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 		# get list of connected_users
 		connected_users = room.connected_users.all()
 
-		# Execute these functions asychronously
-		await asyncio.gather(*[
-			append_unread_msg_if_not_connected(room, room.user1, connected_users, message), 
-			append_unread_msg_if_not_connected(room, room.user2, connected_users, message),
-			create_room_chat_message(room, self.scope["user"], message)
-		])
-
 		await self.channel_layer.group_send(
 			room.group_name,
 			{
