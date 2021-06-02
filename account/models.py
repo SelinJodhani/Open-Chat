@@ -14,8 +14,7 @@ class MyAccountmanager(BaseUserManager):
         if not username:
             raise ValueError('Users must have a username.')
 
-        user = self.model(email=self.normalize_email(email), username=username)
-        user.set_password(password)
+        user = self.model(email=self.normalize_email(email), username=username, password=password)
         user.save(using=self._db)
         return user
 

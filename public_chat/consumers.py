@@ -55,9 +55,9 @@ class PublicChatConsumer(AsyncJsonWebsocketConsumer):
 					raise ClientError(422, "You can't send an empty message.")
 				await self.send_room(content["room_id"], content["message"])
 			elif command == "join":
-				await self.join_room(content['room'])
+				await self.join_room(content['room_id'])
 			elif command == "leave":
-				await self.leave_room(content['room'])
+				await self.leave_room(content['room_id'])
 			elif command == "get_room_chat_messages":
 				await self.display_progress_bar(True)
 				room = await get_room_or_error(content['room_id'])

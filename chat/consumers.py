@@ -42,15 +42,15 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 		command = content.get("command", None)
 		try:
 			if command == "join":
-				print("joining room: " + str(content['room']))
-				await self.join_room(content["room"])
+				print("joining room: " + str(content['room_id']))
+				await self.join_room(content["room_id"])
 			elif command == "leave":
 				# Leave the room
-				await self.leave_room(content["room"])
+				await self.leave_room(content["room_id"])
 			elif command == "send":
 				if len(content["message"].lstrip()) == 0:
 					raise ClientError(422,"You can't send an empty message.")
-				await self.send_room(content["room"], content["message"])
+				await self.send_room(content["room_id"], content["message"])
 			elif command == "get_room_chat_messages":
 				await self.display_progress_bar(True)
 				room = await get_room_or_error(content['room_id'], self.scope["user"])
@@ -117,19 +117,6 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 			"join": str(room.id),
 		})
 
-		if self.scope["user"].is_authenticated:
-			# Notify the group that someone joined
-			await self.channel_layer.group_send(
-				room.group_name,
-				{
-					"type": "chat.join",
-					"room_id": room_id,
-					"profile_image": self.scope["user"].profile_image.url,
-					"username": self.scope["user"].username,
-					"user_id": self.scope["user"].id,
-				}
-			)
-
 	async def leave_room(self, room_id):
 		"""
 		Called by receive_json when someone sent a leave command.
@@ -141,18 +128,6 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 
 		# Remove user from "connected_users" list
 		await disconnect_user(room, self.scope["user"])
-
-		# Notify the group that someone left
-		await self.channel_layer.group_send(
-			room.group_name,
-			{
-				"type": "chat.leave",
-				"room_id": room_id,
-				"profile_image": self.scope["user"].profile_image.url,
-				"username": self.scope["user"].username,
-				"user_id": self.scope["user"].id,
-			}
-		)
 
 		# Remove that we're in the room
 		self.room_id = None
@@ -185,8 +160,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 		# Get the room and send to the group about it
 		room = await get_room_or_error(room_id, self.scope["user"])
 
-		# get list of connected_users
-		connected_users = room.connected_users.all()
+		await create_room_chat_message(room, self.scope['user'], message)
 
 		await self.channel_layer.group_send(
 			room.group_name,
@@ -198,45 +172,6 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 				"message": message,
 			}
 		)
-
-
-	# These helper methods are named by the types we send - so chat.join becomes chat_join
-	async def chat_join(self, event):
-		"""
-		Called when someone has joined our chat.
-		"""
-		# Send a message down to the client
-		print("ChatConsumer: chat_join: " + str(self.scope["user"].id))
-		if event["username"]:
-			await self.send_json(
-				{
-					"msg_type": MSG_TYPE_ENTER,
-					"room": event["room_id"],
-					"profile_image": event["profile_image"],
-					"username": event["username"],
-					"user_id": event["user_id"],
-					"message": event["username"] + " connected.",
-				},
-			)
-
-	async def chat_leave(self, event):
-		"""
-		Called when someone has left our chat.
-		"""
-		# Send a message down to the client
-		print("ChatConsumer: chat_leave")
-		if event["username"]:
-			await self.send_json(
-			{
-				"msg_type": MSG_TYPE_LEAVE,
-				"room": event["room_id"],
-				"profile_image": event["profile_image"],
-				"username": event["username"],
-				"user_id": event["user_id"],
-				"message": event["username"] + " disconnected.",
-			},
-		)
-
 
 	async def chat_message(self, event):
 		"""

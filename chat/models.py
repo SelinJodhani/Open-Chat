@@ -11,13 +11,13 @@ class PrivateChatRoom(models.Model):
 	"""
 	A private room for people to chat in.
 	"""
-	user1               = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user1")
-	user2               = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user2")
+	user1 = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user1")
+	user2 = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user2")
 
 	# Users who are currently connected to the socket (Used to keep track of unread messages)
-	connected_users     = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name="connected_users")
+	connected_users = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name="connected_users")
 
-	is_active 			= models.BooleanField(default=False)
+	is_active = models.BooleanField(default=False)
 
 	def connect_user(self, user):
 		"""
@@ -58,10 +58,10 @@ class RoomChatMessage(models.Model):
 	"""
 	Chat message created by a user inside a Room
 	"""
-	user                = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-	room                = models.ForeignKey(PrivateChatRoom, on_delete=models.CASCADE)
-	timestamp           = models.DateTimeField(auto_now_add=True)
-	content             = models.TextField(unique=False, blank=False,)
+	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+	room = models.ForeignKey(PrivateChatRoom, on_delete=models.CASCADE)
+	timestamp = models.DateTimeField(auto_now_add=True)
+	content = models.TextField(unique=False, blank=False)
 
 	objects = RoomChatMessageManager()
 
