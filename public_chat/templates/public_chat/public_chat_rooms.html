@@ -6,15 +6,7 @@
 	<!-- MEDIUM+ SCREENS -->
 	<div class="main d-none d-md-flex flex-column">
 
-		{% for room in rooms %}
-			<div class="card">
-				<h5 class="card-header">{{room.title}}</h5>
-				<div class="card-body">
-					<p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-					<a href="{% url 'public-chat:view' room_id=room.id %}" class="btn btn-primary">Join</a>
-				</div>
-			</div><br>
-		{% endfor %}
+		{% include 'public_chat/snippets/public_chat_room.html' with room_id=room_id %}
 
 	</div>
 	<!-- END MEDIUM+ SCREENS -->

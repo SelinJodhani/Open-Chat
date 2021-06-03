@@ -14,11 +14,15 @@ from account.views import (
     LoginView,
     LogoutView,
     AccountSearchView,
+)
 
+from public_chat.views import(
+    public_chat_view
 )
 
 urlpatterns = [
 	path('', home_screen_view, name='home'),
+    path('public_chat/', include('public_chat.urls', namespace='public-chat')),
     path('account/', include('account.urls', namespace='account')),
 	path('admin/', admin.site.urls),
     path('chat/', include('chat.urls', namespace='chat')),
