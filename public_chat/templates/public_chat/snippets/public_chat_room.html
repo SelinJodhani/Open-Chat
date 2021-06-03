@@ -72,7 +72,7 @@ PUBLIC CHAT
 <div class="card mt-3">
 	<div class="card-header">
 		<div class="d-flex flex-row justify-content-between">
-			<h3 class="">{{room_title}}</h3>
+			<h3 class="">Public Chat</h3>
 			<div class="d-flex flex-row align-items-center">
 				<span class="material-icons m-auto pr-1 connected-users-icon">person_outline</span>
 				<span class="m-auto connected-users" id="id_connected_users"></span>
@@ -127,7 +127,7 @@ PUBLIC CHAT
 		}
 		// Handle joining (Client perspective)
 		if (data.join) {
-			console.log("Joining public room " + data.join);
+			console.log(data.username + " Joined PublicChatRoom : " + data.join);
 			getRoomChatMessages()
 		}
 
@@ -147,7 +147,7 @@ PUBLIC CHAT
 	};
 
 	public_chat_socket.addEventListener("open", function(e){
-	console.log("Public Public ChatSocket OPEN")
+	console.log("PublicChatSocket OPEN")
 		// join chat room
 		if("{{request.user.is_authenticated}}"){
 			public_chat_socket.send(JSON.stringify({

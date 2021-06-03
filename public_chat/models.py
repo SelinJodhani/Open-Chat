@@ -57,7 +57,7 @@ class PublicRoomChatMessage(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     room = models.ForeignKey(PublicChatRoom, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
-    content = models.TextField(unique=False, blank=False,)
+    content = models.TextField(unique=False, blank=False)
 
     objects = PublicRoomChatMessageManager()
 

@@ -81,7 +81,7 @@ class PublicChatConsumer(AsyncJsonWebsocketConsumer):
 
 		if self.room_id != None:
 			if str(room_id) != str(self.room_id):
-				raise ClientError("ROOM_ACCESS_DENIED", "Room access denied")
+				raise ClientError("ROOM_ACCESS_DENIED", "Room access denied.")
 			if not is_authenticated(self.scope['user']):
 				raise ClientError("AUTH_ERROR", "You must be authenicated to chat.")
 		else:
