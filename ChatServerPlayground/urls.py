@@ -6,7 +6,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import path
 
 from personal.views import (
-	home_screen_view
+	home_screen_view,
 )
 
 from account.views import (
@@ -17,11 +17,14 @@ from account.views import (
 )
 
 from public_chat.views import(
-    public_chat_view
+    public_chat_create,
+    my_chat_rooms,
 )
 
 urlpatterns = [
 	path('', home_screen_view, name='home'),
+    path('create/', public_chat_create, name="create"),
+    path('rooms/', my_chat_rooms, name="rooms"),
     path('public_chat/', include('public_chat.urls', namespace='public-chat')),
     path('account/', include('account.urls', namespace='account')),
 	path('admin/', admin.site.urls),

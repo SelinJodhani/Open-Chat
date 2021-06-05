@@ -1,3 +1,4 @@
+from django.http.response import HttpResponse
 from django.shortcuts import render
 from django.conf import settings
 
@@ -15,4 +16,16 @@ def home_screen_view(request):
 	context['debug'] = DEBUG
 	context['room_id'] = "1"
 	context['rooms'] = rooms
+
+	user = request.user
+
+	if user.is_authenticated:
+
+		try:
+			room = PublicChatRoom.objects.filter(author=user)
+			context['my_room'] = room
+			context['user'] = user
+		except PublicChatRoom.DoesNotExist:
+			pass
+
 	return render(request, "personal/home.html", context)
