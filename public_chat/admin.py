@@ -6,8 +6,8 @@ from django.db import models
 from public_chat.models import PublicChatRoom, PublicRoomChatMessage
 
 class PublicChatRoomAdmin(admin.ModelAdmin):
-    list_display = ['id','title', ]
-    search_fields = ['id', 'title', ]
+    list_display = ['id','title', 'author']
+    search_fields = ['id', 'title', 'author__username', 'author__email']
     readonly_fields = ['id',]
 
     class Meta:

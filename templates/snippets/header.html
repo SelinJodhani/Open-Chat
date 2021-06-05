@@ -14,7 +14,6 @@
 		width: 500px;
 		overflow-x: hidden;
 	}
-
 	.notifications-material-icon {
 		font-size: 28px;
 
@@ -25,6 +24,18 @@
 		background-color: var(--main-background-color);
 	}
 	.notifications-icon-container:hover {
+		cursor: pointer;
+		background-color: var(--secondary-text-color)
+	}
+	.create-material-icon {
+		font-size: 28px;
+	}
+	.create-icon-container{
+		width: 40px;
+		height: 40px;
+		background-color: var(--main-background-color);
+	}
+	.create-icon-container:hover {
 		cursor: pointer;
 		background-color: var(--secondary-text-color)
 	}
@@ -68,6 +79,12 @@
 					<div class="dropdown dropleft show p-2">
 						<div class="d-flex flex-row">
 
+							<div class="btn-group">
+								<div class="d-flex create-icon-container rounded-circle align-items-center mr-3">
+									<span onclick="location='{% url 'create' %}'" class="d-flex material-icons create-material-icon m-auto align-items-center">add_circle</span>
+								</div>
+							</div>
+
 							<div class="btn-group dropleft">
 								<div class="d-flex notifications-icon-container rounded-circle align-items-center mr-3" id="id_chat_notification_dropdown_toggle" data-toggle="dropdown">
 									<span id="id_chat_notifications_count" class="notify-badge"></span>
@@ -90,6 +107,9 @@
 								<img class="account-image rounded-circle m-auto d-block dropdown-toggle" id="id_profile_links" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{{request.user.profile_image.url}}" alt="codingwithmitch logo" width="40" height="40">
 								<div class="dropdown-menu" aria-labelledby="id_profile_links">
 									<a class="dropdown-item" href="{% url 'account:view' user_id=request.user.id %}">Account</a>
+									{% if my_room %}
+										<a class="dropdown-item" href="{% url 'rooms' %}">My Chat-Rooms</a>
+									{% endif %}
 									<a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
 								</div>
 							</div>
