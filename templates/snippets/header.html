@@ -156,8 +156,8 @@
 	<!-- END SMALL SCREENS -->
 </div>
 
-{% comment %} {% include 'snippets/general_notifications.html' %}
-{% include 'snippets/chat_notifications.html' %}
+{#% include 'snippets/general_notifications.html' %#}
+{#% include 'snippets/chat_notifications.html' %#}
 
 <!-- Setup SOCKET for NOTIFICATIONS -->
 <script type="text/javascript">
@@ -177,6 +177,7 @@
 		/*
 			GENERAL NOTIFICATIONS
 		*/
+
 		// new 'general' notifications data payload
 		if(data.general_msg_type == 0){
 			handleGeneralNotificationsData(data['notifications'], data['new_page_number'])
@@ -207,6 +208,7 @@
 		/*
 			CHAT NOTIFICATIONS
 		*/
+
 		// new 'chat' notifications data payload
 		if(data.chat_msg_type == 10){
 			handleChatNotificationsData(data['notifications'], data['new_page_number'])
@@ -225,7 +227,7 @@
 	}
 
 	notificationSocket.onclose = function(e) {
-		console.error('Notification Socket closed unexpectedly');
+		console.error('Notification Socket closed unexpectedly.');
 	};
 
 	notificationSocket.onopen = function(e){
@@ -248,7 +250,7 @@
 	else if (notificationSocket.readyState == WebSocket.CONNECTING){
 		console.log("Notification Socket connecting..")
 	}
-</script> {% endcomment %}
+</script>
 
 <script type="text/javascript">
 	
