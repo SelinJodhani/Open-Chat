@@ -1,7 +1,6 @@
 from django.core.serializers.python import Serializer
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
-
 class LazyNotificationEncoder(Serializer):
 	"""
 	Serialize a Notification into JSON. 

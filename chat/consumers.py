@@ -7,7 +7,7 @@ from django.core.paginator import Paginator
 import json
 import asyncio
 
-from chat.models import RoomChatMessage, PrivateChatRoom
+from chat.models import RoomChatMessage, PrivateChatRoom, UnreadChatRoomMessages
 from friend.models import FriendList
 from account.utils import LazyAccountEncoder
 from chat.utils import calculate_timestamp, LazyRoomChatMessageEncoder
@@ -42,15 +42,15 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 		command = content.get("command", None)
 		try:
 			if command == "join":
-				print("joining room: " + str(content['room_id']))
-				await self.join_room(content["room_id"])
+				print("joining room: " + str(content['room']))
+				await self.join_room(content["room"])
 			elif command == "leave":
 				# Leave the room
-				await self.leave_room(content["room_id"])
+				await self.leave_room(content["room"])
 			elif command == "send":
 				if len(content["message"].lstrip()) == 0:
 					raise ClientError(422,"You can't send an empty message.")
-				await self.send_room(content["room_id"], content["message"])
+				await self.send_room(content["room"], content["message"])
 			elif command == "get_room_chat_messages":
 				await self.display_progress_bar(True)
 				room = await get_room_or_error(content['room_id'], self.scope["user"])
@@ -106,6 +106,8 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 		# Store that we're in the room
 		self.room_id = room.id
 
+		await on_user_connected(room, self.scope["user"])
+
 		# Add them to the group so they get room messages
 		await self.channel_layer.group_add(
 			room.group_name,
@@ -116,6 +118,19 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 		await self.send_json({
 			"join": str(room.id),
 		})
+
+		if self.scope["user"].is_authenticated:
+			# Notify the group that someone joined
+			await self.channel_layer.group_send(
+				room.group_name,
+				{
+					"type": "chat.join",
+					"room_id": room_id,
+					"profile_image": self.scope["user"].profile_image.url,
+					"username": self.scope["user"].username,
+					"user_id": self.scope["user"].id,
+				}
+			)
 
 	async def leave_room(self, room_id):
 		"""
@@ -128,6 +143,18 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 
 		# Remove user from "connected_users" list
 		await disconnect_user(room, self.scope["user"])
+
+		# Notify the group that someone left
+		await self.channel_layer.group_send(
+			room.group_name,
+			{
+				"type": "chat.leave",
+				"room_id": room_id,
+				"profile_image": self.scope["user"].profile_image.url,
+				"username": self.scope["user"].username,
+				"user_id": self.scope["user"].id,
+			}
+		)
 
 		# Remove that we're in the room
 		self.room_id = None
@@ -160,7 +187,15 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 		# Get the room and send to the group about it
 		room = await get_room_or_error(room_id, self.scope["user"])
 
-		await create_room_chat_message(room, self.scope['user'], message)
+		# get list of connected_users
+		connected_users = room.connected_users.all()
+
+		# Execute these functions asychronously
+		await asyncio.gather(*[
+			append_unread_msg_if_not_connected(room, room.user1, connected_users, message), 
+			append_unread_msg_if_not_connected(room, room.user2, connected_users, message),
+			create_room_chat_message(room, self.scope["user"], message)
+		])
 
 		await self.channel_layer.group_send(
 			room.group_name,
@@ -172,6 +207,45 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 				"message": message,
 			}
 		)
+
+
+	# These helper methods are named by the types we send - so chat.join becomes chat_join
+	async def chat_join(self, event):
+		"""
+		Called when someone has joined our chat.
+		"""
+		# Send a message down to the client
+		print("ChatConsumer: chat_join: " + str(self.scope["user"].id))
+		if event["username"]:
+			await self.send_json(
+				{
+					"msg_type": MSG_TYPE_ENTER,
+					"room": event["room_id"],
+					"profile_image": event["profile_image"],
+					"username": event["username"],
+					"user_id": event["user_id"],
+					"message": event["username"] + " connected.",
+				},
+			)
+
+	async def chat_leave(self, event):
+		"""
+		Called when someone has left our chat.
+		"""
+		# Send a message down to the client
+		print("ChatConsumer: chat_leave")
+		if event["username"]:
+			await self.send_json(
+			{
+				"msg_type": MSG_TYPE_LEAVE,
+				"room": event["room_id"],
+				"profile_image": event["profile_image"],
+				"username": event["username"],
+				"user_id": event["user_id"],
+				"message": event["username"] + " disconnected.",
+			},
+		)
+
 
 	async def chat_message(self, event):
 		"""
@@ -245,7 +319,6 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 			await self.send_json(errorData)
 		return
 
-
 @database_sync_to_async
 def get_room_or_error(room_id, user):
 	"""
@@ -266,7 +339,6 @@ def get_room_or_error(room_id, user):
 		if not room.user2 in friend_list:
 			raise ClientError("ROOM_ACCESS_DENIED", "You must be friends to chat.")
 	return room
-
 
 # I don't think this requires @database_sync_to_async since we are just accessing a model field
 # https://docs.djangoproject.com/en/3.1/ref/models/instances/#refreshing-objects-from-database
@@ -289,11 +361,9 @@ def get_user_info(room, user):
 		raise ClientError("DATA_ERROR", "Unable to get that users information.")
 	return None
 
-
 @database_sync_to_async
 def create_room_chat_message(room, user, message):
 	return RoomChatMessage.objects.create(user=user, room=room, content=message)
-
 
 @database_sync_to_async
 def get_room_chat_messages(room, page_number):
@@ -316,17 +386,44 @@ def get_room_chat_messages(room, page_number):
 		print("EXCEPTION: " + str(e))
 	return None
 
-
-
 @database_sync_to_async
 def connect_user(room, user):
 	# add user to connected_users list
 	account = Account.objects.get(pk=user.id)
 	return room.connect_user(account)
 
-
 @database_sync_to_async
 def disconnect_user(room, user):
 	# remove from connected_users list
 	account = Account.objects.get(pk=user.id)
 	return room.disconnect_user(account)
+
+# If the user is not connected to the chat, increment "unread messages" count
+@database_sync_to_async
+def append_unread_msg_if_not_connected(room, user, connected_users, message):
+	if not user in connected_users: 
+		try:
+			unread_msgs = UnreadChatRoomMessages.objects.get(room=room, user=user)
+			unread_msgs.most_recent_message = message
+			unread_msgs.count += 1
+			unread_msgs.save()
+		except UnreadChatRoomMessages.DoesNotExist:
+			UnreadChatRoomMessages(room=room, user=user, count=1).save()
+			pass
+	return
+
+# When a user connects, reset their unread message count
+@database_sync_to_async
+def on_user_connected(room, user):
+	# confirm they are in the connected users list
+	connected_users = room.connected_users.all()
+	if user in connected_users:
+		try:
+			# reset count
+			unread_msgs = UnreadChatRoomMessages.objects.get(room=room, user=user)
+			unread_msgs.count = 0
+			unread_msgs.save()
+		except UnreadChatRoomMessages.DoesNotExist:
+			UnreadChatRoomMessages(room=room, user=user).save()
+			pass
+	return
