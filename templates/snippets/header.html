@@ -104,7 +104,7 @@
 							</div>
 
 							<div class="btn-group dropleft">
-								<img class="account-image rounded-circle m-auto d-block dropdown-toggle" id="id_profile_links" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{{request.user.profile_image.url}}" alt="codingwithmitch logo" width="40" height="40">
+								<img class="account-image rounded-circle m-auto d-block dropdown-toggle" id="id_profile_links" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{{request.user.profile_image.url}}" width="40" height="40">
 								<div class="dropdown-menu" aria-labelledby="id_profile_links">
 									<a class="dropdown-item" href="{% url 'account:view' user_id=request.user.id %}">Account</a>
 									{% if my_room %}
@@ -139,7 +139,7 @@
 				<div class="dropdown dropleft p-2 mt-2">
 					<div class="d-flex flex-row">
 						<div class="btn-group dropleft">
-							<img class="account-image rounded-circle m-auto d-block dropdown-toggle" id="id_profile_links" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{{request.user.profile_image.url}}" alt="codingwithmitch logo" width="40" height="40">
+							<img class="account-image rounded-circle m-auto d-block dropdown-toggle" id="id_profile_links" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{{request.user.profile_image.url}}" width="40" height="40">
 							<div class="dropdown-menu" aria-labelledby="id_profile_links">
 								<a class="dropdown-item" href="{% url 'account:view' user_id=request.user.id %}">Account</a>
 							</div>
@@ -157,7 +157,7 @@
 </div>
 
 {% include 'snippets/general_notifications.html' %}
-{#% include 'snippets/chat_notifications.html' %#}
+{% include 'snippets/chat_notifications.html' %}
 
 <!-- Setup SOCKET for NOTIFICATIONS -->
 <script type="text/javascript">
@@ -253,8 +253,6 @@
 </script>
 
 <script type="text/javascript">
-	
-	setupChatDropdownHeader()
 
 	function executeQuery() {
 		var query = ""
@@ -264,31 +262,6 @@
 		}
 	    window.location.replace("{% url 'search' %}?q=" + query)
 	    return false
-	}
-
-	function setupChatDropdownHeader(){
-		var notificationContainer = document.getElementById("id_chat_notifications_container")
-
-		if(notificationContainer != null){
-
-			var div = document.createElement("div")
-			div.classList.add("chat-dropdown-header", "d-flex", "flex-row", "justify-content-end", "m-auto", "align-items-end")
-			div.addEventListener("click", function(e){
-				var url = "{% url 'chat:private-chat-room' %}"
-				chatRedirect(url)
-			})
-
-			span1 = document.createElement("span")
-			span1.classList.add("mr-2")
-			span1.innerHTML = "Go to chat"
-			div.appendChild(span1)
-
-			span2 = document.createElement("span")
-			span2.classList.add("material-icons", "mr-2")
-			span2.innerHTML = "open_with"
-			div.appendChild(span2)
-			notificationContainer.appendChild(div)
-		}
 	}
 
 	function chatRedirect(url){

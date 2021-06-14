@@ -425,7 +425,7 @@ def get_chat_notifications(user, page_number):
 	Get Chat Notifications with Pagination (next page of results).
 	This is for appending to the bottom of the notifications list.
 	Chat Notifications are:
-	1. UnreadChatRoomMessages
+		1. UnreadChatRoomMessages
 	"""
 	if user.is_authenticated:
 		chatmessage_ct = ContentType.objects.get_for_model(UnreadChatRoomMessages)
@@ -434,8 +434,10 @@ def get_chat_notifications(user, page_number):
 
 		# sleep 1s for testing
 		# sleep(1)  
-		print("PAGES: " + str(p.num_pages))
+		# print("PAGES: " + str(p.num_pages))
+
 		payload = {}
+
 		if len(notifications) > 0:
 			if int(page_number) <= p.num_pages:
 				s = LazyNotificationEncoder()
@@ -456,6 +458,7 @@ def get_new_chat_notifications(user, newest_timestatmp):
 	Retrieve any notifications newer than the newest_timestatmp on the screen.
 	"""
 	payload = {}
+
 	if user.is_authenticated:
 		timestamp = newest_timestatmp[0:newest_timestatmp.find("+")] # remove timezone because who cares
 		timestamp = datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S.%f')
@@ -472,6 +475,7 @@ def get_new_chat_notifications(user, newest_timestatmp):
 @database_sync_to_async
 def get_unread_chat_notification_count(user):
     payload = {}
+	
     if user.is_authenticated:
         chatmessage_ct = ContentType.objects.get_for_model(UnreadChatRoomMessages)
         notifications = Notification.objects.filter(target=user, content_type__in=[chatmessage_ct])
