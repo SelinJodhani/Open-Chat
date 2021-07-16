@@ -27,8 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-if DEBUG:
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # During development only
+# if DEBUG:
+#     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # During development only
 
 AUTH_USER_MODEL = 'account.Account'
 AUTHENTICATION_BACKENDS = ( 
@@ -166,3 +166,10 @@ TEMP = os.path.join(BASE_DIR, 'media_cdn/temp')
 BASE_URL = "http://127.0.0.1:8000"
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "noreply.openchat@gmail.com"
+EMAIL_HOST_PASSWORD = "znwnizpadjgcjjax"

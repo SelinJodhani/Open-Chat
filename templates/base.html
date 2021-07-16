@@ -61,10 +61,6 @@
 <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'cropperjs/dist/cropper.min.js' %}"></script>
 
-<script src="{% static 'darkreader/darkreader.js' %}"></script>
-<script src="{% static 'darkreader/index.d.ts' %}"></script>
-<script src="{% static 'darkreader/package.json' %}"></script>
-
 <script type="text/javascript">
 	function displayLoadingSpinner(isDisplayed){
 		var spinner = document.getElementById("id_loading_spinner")
@@ -75,11 +71,6 @@
 			spinner.style.display = "none"
 		}
 	}
-
-	DarkReader.enable({
-    brightness: 100,
-    contrast: 100,  
-    });
 	
 </script>
 
